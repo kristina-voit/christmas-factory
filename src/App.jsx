@@ -53,16 +53,14 @@ function App() {
 
   return (
     <Container>
-      <h2>Add a new product</h2>
+      <h2>🎄 Add a new product 🍪</h2>
       <Form onSubmit={handleSubmit}>
         <TextInput
           onTextInputChange={handleChange}
           name="name"
           value={product.name}
         >
-          <h3>
-            <span>Product Name</span>
-          </h3>
+          Product Name
         </TextInput>
 
         <InputRow>
@@ -81,7 +79,7 @@ function App() {
             value={product.isDecorated}
             onCheckboxChange={handleChange}
           >
-            Is decorated?
+            decorated
           </Checkbox>
         </InputRow>
 
@@ -95,8 +93,7 @@ function App() {
         </Select>
 
         <RadioButton value={product.packageSize} onRadioChange={handleChange}>
-          <h3>Package Size</h3>
-          <hr />
+          Package Size
         </RadioButton>
 
         <TextInput
@@ -142,12 +139,35 @@ const InputRow = styled.div`
 `;
 
 const Form = styled.form`
+  background: #620202;
+  padding: 0.7rem 0.5rem 1.2rem;
+  border-radius: 10px;
+
   label {
     display: block;
     font-weight: bold;
   }
-  input {
+  input,
+  select {
     padding: 0.25rem;
-    margin-bottom: 0.5rem;
+    margin: 0.5rem 0 1rem;
+  }
+
+  button {
+    background: var(--button-bg);
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem;
+    width: 49%;
+  }
+  button:first-child {
+    margin-right: 2%;
+  }
+  button:nth-child(even) {
+    background: transparent;
+    border: 2px solid var(--button-bg);
   }
 `;
