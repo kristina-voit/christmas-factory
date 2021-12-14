@@ -155,11 +155,11 @@ const Form = styled.form`
 
   button {
     background: var(--button-bg);
+    border: 2px solid var(--button-bg);
+    border-radius: 5px;
     color: var(--primary-color);
     font-size: 1.2rem;
     font-weight: 600;
-    border: none;
-    border-radius: 5px;
     padding: 0.5rem;
     width: 49%;
   }
@@ -168,6 +168,5 @@ const Form = styled.form`
   }
   button:nth-child(even) {
     background: transparent;
-    border: 2px solid var(--button-bg);
   }
 `;

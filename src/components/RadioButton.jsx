@@ -44,5 +44,10 @@ export default RadioButton;
 
 const Radios = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  gap: 1rem;
+  justify-content: flex-start;
+
+  input[type='radio'] {
+    margin-right: 0.3rem;
+  }
 `;
