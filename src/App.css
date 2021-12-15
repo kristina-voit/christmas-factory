@@ -11,10 +11,18 @@
   --warning: #ea4630;
 }
 
+html {
+  height: 100vh;
+}
 body {
   font-family: sans-serif;
   background: var(--primary-bg);
   color: var(--primary-color);
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }
 
 h2 {

@@ -54,7 +54,7 @@ function App() {
     event.preventDefault();
     if (isProductValid(product)) {
       setProducts([...products, product]);
-      setProduct(initialProduct);
+      // setProduct(initialProduct);
       setHasFormErrors(false);
     } else {
       setHasFormErrors(true);
@@ -63,93 +63,102 @@ function App() {
 
   return (
     <Container>
-      <h2>🎄 Add a new product 🍪</h2>
-      {hasFormErrors && (
-        <ErrorMessage>
-          <div>
-            🎅🏽
-            <div className="bubble">🗯</div>
-          </div>
-          <p>
-            <strong>Ho ho ho! </strong>
-            Please check if all fields are correctly filled.
-          </p>
-        </ErrorMessage>
-      )}
-      <Form onSubmit={handleSubmit}>
-        <TextInput
-          onTextInputChange={handleChange}
-          name="name"
-          value={product.name}
-        >
-          Product Name
-        </TextInput>
+      <section>
+        <h2>🎄 Add a new product 🍪</h2>
+        {hasFormErrors && (
+          <ErrorMessage>
+            <div>
+              🎅🏽
+              <div className="bubble">🗯</div>
+            </div>
+            <p>
+              <strong>Ho ho ho! </strong>
+              Please check if all fields are correctly filled.
+            </p>
+          </ErrorMessage>
+        )}
+        <Form onSubmit={handleSubmit}>
+          <TextInput
+            onTextInputChange={handleChange}
+            name="name"
+            value={product.name}
+          >
+            Product Name
+          </TextInput>
 
-        <InputRow>
-          <div>
-            <NumberInput
-              name="price"
-              value={product.price}
-              onNumberInputChange={handleChange}
+          <InputRow>
+            <div>
+              <NumberInput
+                name="price"
+                value={product.price}
+                onNumberInputChange={handleChange}
+              >
+                Price (in €)
+              </NumberInput>
+            </div>
+
+            <Checkbox
+              name="isDecorated"
+              value={product.isDecorated}
+              onCheckboxChange={handleChange}
             >
-              Price (in €)
-            </NumberInput>
+              decorated
+            </Checkbox>
+          </InputRow>
+
+          <Select
+            name="category"
+            value={product.category}
+            options={categories}
+            onSelectChange={handleChange}
+          >
+            Product Category
+          </Select>
+
+          <RadioButton value={product.packageSize} onRadioChange={handleChange}>
+            Package Size
+          </RadioButton>
+
+          <TextInput
+            name="contactEmail"
+            value={product.contactEmail}
+            onTextInputChange={handleChange}
+            placeholder="Add your email …"
+          >
+            Contact Email
+          </TextInput>
+
+          <div>
+            <button>Add Product</button>
+            {/* Optional */}
+            <button
+              type="reset"
+              onClick={() => {
+                setProduct(initialProduct);
+                setHasFormErrors(false);
+              }}
+            >
+              Reset
+            </button>
           </div>
+        </Form>
+      </section>
 
-          <Checkbox
-            name="isDecorated"
-            value={product.isDecorated}
-            onCheckboxChange={handleChange}
+      <CardTree>
+        {products.map((product, index) => (
+          <article
+            className={'area' + (index < 10 ? index + 1 : '')}
+            style={
+              index > 9 ? { gridRowStart: Math.floor((index - 2) / 4) + 3 } : {}
+            }
           >
-            decorated
-          </Checkbox>
-        </InputRow>
-
-        <Select
-          name="category"
-          value={product.category}
-          options={categories}
-          onSelectChange={handleChange}
-        >
-          Product Category
-        </Select>
-
-        <RadioButton value={product.packageSize} onRadioChange={handleChange}>
-          Package Size
-        </RadioButton>
-
-        <TextInput
-          name="contactEmail"
-          value={product.contactEmail}
-          onTextInputChange={handleChange}
-          placeholder="Add your email …"
-        >
-          Contact Email
-        </TextInput>
-
-        <div>
-          <button>Add Product</button>
-          {/* Optional */}
-          <button
-            type="reset"
-            onClick={() => {
-              setProduct(initialProduct);
-              setHasFormErrors(false);
-            }}
-          >
-            Reset
-          </button>
-        </div>
-      </Form>
-
-      {products.map((product) => (
-        <article>
-          <h3>{product.name}</h3>
-          <p>
-            {product.category} // {product.price} €
-          </p>
-        </article>
-      ))}
+            <h3>{product.name}</h3>
+            <p>
+              {product.category} // {product.price} €
+            </p>
+          </article>
+        ))}
+      </CardTree>
     </Container>
   );
 }
@@ -157,8 +166,13 @@ function App() {
 export default App;
 
 const Container = styled.div`
-  max-width: 24rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 38% auto;
+  grid-template-rows: 1fr;
+  height: 100%;
   margin: 0 auto;
+  width: 80%;
 `;
 
 const InputRow = styled.div`
@@ -225,5 +239,63 @@ const ErrorMessage = styled.div`
     position: absolute;
     top: -17px;
     right: -38px;
+  }
+`;
+
+const CardTree = styled.div`
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-auto-rows: repeat(10, 1fr);
+  grid-auto-flow: row;
+  gap: 10px 10px;
+  grid-template-areas:
+    '. . . area1 area1 . . .'
+    '. . area2 area2 area3 area3 . .'
+    '. area4 area4 area5 area5 area6 area6 .'
+    'area7 area7 area8 area8 area9 area9 area10 area10';
+  padding: 6rem;
+
+  article {
+    background: var(--secondary-color);
+    border-radius: 8px;
+    grid-column: span 2;
+  }
+  article:hover {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+  }
+
+  .area1 {
+    grid-area: area1;
+  }
+  .area2 {
+    grid-area: area2;
+  }
+  .area3 {
+    grid-area: area3;
+  }
+  .area4 {
+    grid-area: area4;
+  }
+  .area5 {
+    grid-area: area5;
+  }
+  .area6 {
+    grid-area: area6;
+  }
+  .area7 {
+    grid-area: area7;
+  }
+  .area8 {
+    grid-area: area8;
+  }
+  .area9 {
+    grid-area: area9;
+  }
+  .area10 {
+    grid-area: area10;
+  }
+
+  .area {
   }
 `;
