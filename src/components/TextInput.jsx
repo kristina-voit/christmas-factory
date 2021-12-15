@@ -9,6 +9,7 @@ function TextInput({ name, value, onTextInputChange, placeholder, children }) {
         onChange={onTextInputChange}
         placeholder={placeholder}
         value={value}
+        autoComplete="off"
       />
     </>
   );
