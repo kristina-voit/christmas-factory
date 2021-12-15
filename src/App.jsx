@@ -7,6 +7,8 @@ import Checkbox from './components/Checkbox';
 import Select from './components/Select';
 import RadioButton from './components/RadioButton';
 
+import isProductValid from './lib/validation';
+
 function App() {
   const initialProduct = {
     name: '',
@@ -15,10 +17,13 @@ function App() {
     category: '',
     packageSize: '',
     contactEmail: '',
+    tags: [],
   };
   const [product, setProduct] = useState(initialProduct);
 
   const [products, setProducts] = useState([]);
+
+  const [hasFormErrors, setHasFormErrors] = useState(false);
 
   const categories = [
     'Tee',
@@ -45,31 +50,32 @@ function App() {
     });
   };
 
-  const hasProductNameMinLength = (name, stringLength) =>
-    name.length > stringLength;
-
-  const isPriceGreaterThanZero = (price) => price > 0;
-  const hasValidCategory = (category) => category !== '';
-  const isValidEmail = (email) => email.includes('@') && isValidDomain(email);
-  const isValidDomain = (email) => email.split('@')[1].includes('.');
-
-  const isProductValid = (product) =>
-    hasProductNameMinLength(product.name, 3) &&
-    isPriceGreaterThanZero(product.price) &&
-    hasValidCategory(product.category) &&
-    isValidEmail(product.contactEmail);
-
   const handleSubmit = (event) => {
     event.preventDefault();
     if (isProductValid(product)) {
       setProducts([...products, product]);
       setProduct(initialProduct);
+      setHasFormErrors(false);
+    } else {
+      setHasFormErrors(true);
     }
   };
 
   return (
     <Container>
       <h2>🎄 Add a new product 🍪</h2>
+      {hasFormErrors && (
+        <ErrorMessage>
+          <div>
+            🎅🏽
+            <div className="bubble">🗯</div>
+          </div>
+          <p>
+            <strong>Ho ho ho! </strong>
+            Please check if all fields are correctly filled.
+          </p>
+        </ErrorMessage>
+      )}
       <Form onSubmit={handleSubmit}>
         <TextInput
           onTextInputChange={handleChange}
@@ -124,7 +130,13 @@ function App() {
         <div>
           <button>Add Product</button>
           {/* Optional */}
-          <button type="reset" onClick={() => setProduct(initialProduct)}>
+          <button
+            type="reset"
+            onClick={() => {
+              setProduct(initialProduct);
+              setHasFormErrors(false);
+            }}
+          >
             Reset
           </button>
         </div>
@@ -184,5 +196,34 @@ const Form = styled.form`
   }
   button:nth-child(even) {
     background: transparent;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  align-items: center;
+  background: var(--warning);
+  border-radius: 6px;
+  color: white;
+  display: flex;
+  gap: 2.5rem;
+  margin: 0 0 1rem;
+  padding: 0.5rem;
+
+  div {
+    font-size: 2.5rem;
+    display: inline-block;
+    position: relative;
+    transition: all 0.5s;
+  }
+  div:hover {
+    transform: rotateZ(20deg);
+  }
+
+  div.bubble {
+    font-size: 3rem;
+
+    position: absolute;
+    top: -17px;
+    right: -38px;
   }
 `;
