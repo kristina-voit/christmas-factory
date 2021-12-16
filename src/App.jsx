@@ -1,6 +1,6 @@
 import './App.css';
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TextInput from './components/TextInput';
 import NumberInput from './components/NumberInput';
 import Checkbox from './components/Checkbox';
@@ -8,6 +8,7 @@ import Select from './components/Select';
 import RadioButton from './components/RadioButton';
 
 import isProductValid from './lib/validation';
+import { saveToLocal, loadFromLocal } from './lib/localStorage';
 
 function App() {
   const initialProduct = {
@@ -21,9 +22,14 @@ function App() {
   };
   const [product, setProduct] = useState(initialProduct);
 
-  const [products, setProducts] = useState([]);
+  const localStorageProducts = loadFromLocal('_products');
+  const [products, setProducts] = useState(localStorageProducts ?? []);
 
   const [hasFormErrors, setHasFormErrors] = useState(false);
+
+  useEffect(() => {
+    saveToLocal('_products', products);
+  }, [products]);
 
   const categories = [
     'Tee',
