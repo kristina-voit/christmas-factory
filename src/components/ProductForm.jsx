@@ -6,6 +6,7 @@ import NumberInput from './NumberInput';
 import Checkbox from './Checkbox';
 import Select from './Select';
 import RadioButton from './RadioButton';
+import ProductTags from './ProductTags';
 
 import isProductValid from '../lib/validation';
 
@@ -57,6 +58,14 @@ export default function ProductForm({ onAddProduct }) {
     } else {
       setHasFormErrors(true);
     }
+  };
+
+  const updateTags = (tag) =>
+    setProduct({ ...product, tags: [...product.tags, tag] });
+
+  const deleteTag = (tagToDelete) => {
+    const updatedTags = product.tags.filter((tag) => tag !== tagToDelete);
+    setProduct({ ...product, tags: updatedTags });
   };
 
   return (
@@ -115,6 +124,13 @@ export default function ProductForm({ onAddProduct }) {
         <RadioButton value={product.packageSize} onRadioChange={handleChange}>
           Package Size
         </RadioButton>
+
+        <ProductTags
+          headline="Product Tags"
+          tags={product.tags}
+          onDeleteTag={deleteTag}
+          onUpdateTags={updateTags}
+        />
 
         <TextInput
           name="contactEmail"
