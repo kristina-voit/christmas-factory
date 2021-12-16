@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import TextInput from './TextInput';
 import NumberInput from './NumberInput';
 import Checkbox from './Checkbox';
@@ -52,7 +54,7 @@ export default function ProductForm({ onAddProduct }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (isProductValid(product)) {
-      onAddProduct(product);
+      onAddProduct({ id: uuidv4(), ...product });
       // setProduct(initialProduct);
       setHasFormErrors(false);
     } else {

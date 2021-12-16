@@ -9,13 +9,48 @@ import { saveToLocal, loadFromLocal } from './lib/localStorage';
 
 function App() {
   const localStorageProducts = loadFromLocal('_products');
+  const localStorageFavouriteProducts = loadFromLocal('_favouriteProducts');
+
   const [products, setProducts] = useState(localStorageProducts ?? []);
+  const [favouriteProducts, setFavouriteProducts] = useState(
+    localStorageFavouriteProducts ?? []
+  );
 
   useEffect(() => {
     saveToLocal('_products', products);
   }, [products]);
 
+  useEffect(() => {
+    saveToLocal('_favouriteProducts', favouriteProducts);
+  }, [favouriteProducts]);
+
   const addProduct = (product) => setProducts([...products, product]);
+
+  function isProductInListOfFavourites(favouriteProductToAdd) {
+    return favouriteProducts.some(
+      (everyFavouriteProduct) =>
+        everyFavouriteProduct.id === favouriteProductToAdd.id
+    );
+  }
+
+  function removeProductFromListOfFavourites(product) {
+    return favouriteProducts.filter(
+      (everyFavouriteProduct) => everyFavouriteProduct.id !== product.id
+    );
+  }
+
+  function addToFavourites(favouriteProductToAdd) {
+    // Produkt ist schon auf der Liste der Favourites => Entfernen!
+    if (isProductInListOfFavourites(favouriteProductToAdd)) {
+      const favouritesToKeep = removeProductFromListOfFavourites(
+        favouriteProductToAdd
+      );
+      setFavouriteProducts(favouritesToKeep);
+    } else {
+      // Produkt ist noch NICHT auf der Liste der Favourites => Hinzufügen!
+      setFavouriteProducts([...favouriteProducts, favouriteProductToAdd]);
+    }
+  }
 
   return (
     <Container>
@@ -33,6 +68,9 @@ function App() {
             <p>
               {product.category} // {product.price} €
             </p>
+            <FavouriteIcon onClick={() => addToFavourites(product)}>
+              {isProductInListOfFavourites(product) ? '⭐️' : '✩'}
+            </FavouriteIcon>
           </article>
         ))}
       </CardTree>
@@ -70,6 +108,7 @@ const CardTree = styled.div`
     border-radius: 8px;
     grid-column: span 2;
     padding: 0 1rem 0.5rem;
+    position: relative;
   }
   article:hover {
     background: var(--primary-color);
@@ -106,4 +145,12 @@ const CardTree = styled.div`
   .area10 {
     grid-area: area10;
   }
+`;
+
+const FavouriteIcon = styled.span`
+  cursor: pointer;
+  font-size: 2rem;
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
 `;
