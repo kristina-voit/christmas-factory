@@ -55,7 +55,7 @@ const Container = styled.div`
 const CardTree = styled.div`
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  grid-auto-rows: repeat(10, 1fr);
+  grid-auto-rows: 10rem;
   grid-auto-flow: row;
   gap: 10px 10px;
   grid-template-areas:
@@ -69,6 +69,7 @@ const CardTree = styled.div`
     background: var(--secondary-color);
     border-radius: 8px;
     grid-column: span 2;
+    padding: 0 1rem 0.5rem;
   }
   article:hover {
     background: var(--primary-color);
@@ -104,8 +105,5 @@ const CardTree = styled.div`
   }
   .area10 {
     grid-area: area10;
-  }
-
-  .area {
   }
 `;

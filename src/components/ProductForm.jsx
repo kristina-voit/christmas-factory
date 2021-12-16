@@ -52,7 +52,7 @@ export default function ProductForm({ onAddProduct }) {
     event.preventDefault();
     if (isProductValid(product)) {
       onAddProduct(product);
-      setProduct(initialProduct);
+      // setProduct(initialProduct);
       setHasFormErrors(false);
     } else {
       setHasFormErrors(true);
@@ -193,7 +193,6 @@ const ErrorMessage = styled.div`
 
   div {
     font-size: 2.5rem;
-    display: inline-block;
     position: relative;
     transition: all 0.5s;
   }
