@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-
 import { v4 as uuidv4 } from 'uuid';
-
 import TextInput from './TextInput';
 import NumberInput from './NumberInput';
 import Checkbox from './Checkbox';
 import Select from './Select';
 import RadioButton from './RadioButton';
 import ProductTags from './ProductTags';
-
 import isProductValid from '../lib/validation';
 
 export default function ProductForm({ onAddProduct }) {
@@ -52,23 +49,31 @@ export default function ProductForm({ onAddProduct }) {
   };
 
   const handleSubmit = (event) => {
+    // Gehe beim Submit folgendermaßen um, verhindere Abschicken
     event.preventDefault();
     if (isProductValid(product)) {
+      //wenn Produkt Validierungsfaktoren entspricht, füge es mit UUID zur Produktliste hinzu, solange es keine ...
       onAddProduct({ id: uuidv4(), ...product });
-      // setProduct(initialProduct);
       setHasFormErrors(false);
     } else {
       setHasFormErrors(true);
+      // ansonsten ...
     }
   };
 
   const updateTags = (tag) =>
-    setProduct({ ...product, tags: [...product.tags, tag] });
+    setProduct({ ...product, tags: [...product.tags, tag] }); // Füge neuen Tag hinzu zu bestehenden
 
   const deleteTag = (tagToDelete) => {
+    // Zum Löschen nimm bestehende Tags, vergleiche, zu löschender darf nicht mit anderen Tags übereinstimmen, update die Liste der Tags
     const updatedTags = product.tags.filter((tag) => tag !== tagToDelete);
     setProduct({ ...product, tags: updatedTags });
   };
+
+
+
+
+
 
   return (
     <section>
@@ -149,6 +154,7 @@ export default function ProductForm({ onAddProduct }) {
           <button
             type="reset"
             onClick={() => {
+              //setze das Formular auf den Initial-Zustand zurück und die FormErrors auf nicht zutreffend
               setProduct(initialProduct);
               setHasFormErrors(false);
             }}
@@ -160,6 +166,13 @@ export default function ProductForm({ onAddProduct }) {
     </section>
   );
 }
+
+
+
+
+
+
+
 
 const InputRow = styled.div`
   display: flex;

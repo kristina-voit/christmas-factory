@@ -8,25 +8,23 @@ import './App.css';
 import { saveToLocal, loadFromLocal } from './lib/localStorage';
 
 function App() {
-  const localStorageProducts = loadFromLocal('_products');
-  const localStorageFavouriteProducts = loadFromLocal('_favouriteProducts');
+  const localStorageProducts = loadFromLocal('_products'); //Variable für die Funktion, die die manuell hinzugefügten Produkte aus dem Local Storage lädt
+  const localStorageFavouriteProducts = loadFromLocal('_favouriteProducts'); //Variable für die Funktion, die die als Favoriten gekennzeichneten Produkte aus dem Local Storage lädt
 
   const [products, setProducts] = useState(localStorageProducts ?? []);
-  const [favouriteProducts, setFavouriteProducts] = useState(
-    localStorageFavouriteProducts ?? []
-  );
+  const [favouriteProducts, setFavouriteProducts] = useState(localStorageFavouriteProducts ?? []);
 
   useEffect(() => {
     saveToLocal('_products', products);
-  }, [products]);
+  }, [products]); // Wird nach jedem Mount ausgeführt, hinzugefügtes Produkt wird im Local Storage gespeichert
 
   useEffect(() => {
     saveToLocal('_favouriteProducts', favouriteProducts);
-  }, [favouriteProducts]);
+  }, [favouriteProducts]); // Wird nach jedem Mount ausgeführt, hinzugefügter Favorit wird im Local Storage gespeichert
 
-  const addProduct = (product) => setProducts([...products, product]);
+  const addProduct = (product) => setProducts([...products, product]); // Variable für das Hinzufügen eines Produkts zu den bestehenden Produkten
 
-  function isProductInListOfFavourites(favouriteProductToAdd) {
+  function isProductInListOfFavourites(favouriteProductToAdd) { // Wenn Favorit schon als Favorit markiert ist, gebe ihm die ID
     return favouriteProducts.some(
       (everyFavouriteProduct) =>
         everyFavouriteProduct.id === favouriteProductToAdd.id
@@ -34,6 +32,7 @@ function App() {
   }
 
   function removeProductFromListOfFavourites(product) {
+    // Entferne den Favoriten von der Favoritenliste und gebe alle Favoriten-IDs außer der entfernten Favoriten-ID wieder
     return favouriteProducts.filter(
       (everyFavouriteProduct) => everyFavouriteProduct.id !== product.id
     );
@@ -42,10 +41,7 @@ function App() {
   function addToFavourites(favouriteProductToAdd) {
     // Produkt ist schon auf der Liste der Favourites => Entfernen!
     if (isProductInListOfFavourites(favouriteProductToAdd)) {
-      const favouritesToKeep = removeProductFromListOfFavourites(
-        favouriteProductToAdd
-      );
-      setFavouriteProducts(favouritesToKeep);
+      const favouritesToKeep = removeProductFromListOfFavourites(favouriteProductToAdd);setFavouriteProducts(favouritesToKeep);
     } else {
       // Produkt ist noch NICHT auf der Liste der Favourites => Hinzufügen!
       setFavouriteProducts([...favouriteProducts, favouriteProductToAdd]);
@@ -68,7 +64,8 @@ function App() {
             <p>
               {product.category} // {product.price} €
             </p>
-            <FavouriteIcon onClick={() => addToFavourites(product)}>
+            <FavouriteIcon onClick={() => addToFavourites(product)}> 
+          {/*Per Klick auf Favoriten-Stern: Produkt kommt zu Favoriten und bekommt gelben Stern, ansonsten leeren Stern*/}
               {isProductInListOfFavourites(product) ? '⭐️' : '✩'}
             </FavouriteIcon>
           </article>
