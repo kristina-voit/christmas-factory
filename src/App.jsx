@@ -6,6 +6,7 @@ import ProductForm from './components/ProductForm';
 import './App.css';
 
 import { saveToLocal, loadFromLocal } from './lib/localStorage';
+import ProductCard from './components/ProductCard';
 
 function App() {
   const localStorageProducts = loadFromLocal('_products');
@@ -57,21 +58,13 @@ function App() {
       <ProductForm onAddProduct={addProduct} />
       <CardTree>
         {products.map((product, index) => (
-          <article
+          <ProductCard
             key={index}
-            className={'area' + (index < 10 ? index + 1 : '')}
-            style={
-              index > 9 ? { gridRowStart: Math.floor((index - 2) / 4) + 3 } : {}
-            }
-          >
-            <h3>{product.name}</h3>
-            <p>
-              {product.category} // {product.price} €
-            </p>
-            <FavouriteIcon onClick={() => addToFavourites(product)}>
-              {isProductInListOfFavourites(product) ? '⭐️' : '✩'}
-            </FavouriteIcon>
-          </article>
+            product={product}
+            index={index}
+            isFavourite={isProductInListOfFavourites(product)}
+            onAddToFavourites={addToFavourites}
+          />
         ))}
       </CardTree>
     </Container>
@@ -101,19 +94,7 @@ const CardTree = styled.div`
     '. . area2 area2 area3 area3 . .'
     '. area4 area4 area5 area5 area6 area6 .'
     'area7 area7 area8 area8 area9 area9 area10 area10';
-  padding: 6rem;
-
-  article {
-    background: var(--secondary-color);
-    border-radius: 8px;
-    grid-column: span 2;
-    padding: 0 1rem 0.5rem;
-    position: relative;
-  }
-  article:hover {
-    background: var(--primary-color);
-    color: var(--secondary-color);
-  }
+  padding: 6rem 1rem;
 
   .area1 {
     grid-area: area1;
@@ -145,12 +126,4 @@ const CardTree = styled.div`
   .area10 {
     grid-area: area10;
   }
-`;
-
-const FavouriteIcon = styled.span`
-  cursor: pointer;
-  font-size: 2rem;
-  position: absolute;
-  right: 0.5rem;
-  bottom: 0.5rem;
 `;
