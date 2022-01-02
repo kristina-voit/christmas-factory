@@ -1,7 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
-import { v4 as uuidv4 } from 'uuid';
 
 import TextInput from './TextInput';
 import NumberInput from './NumberInput';
@@ -23,16 +21,15 @@ export default function ProductForm({ onAddProduct }) {
     tags: [],
   };
 
+  const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState(initialProduct);
   const [hasFormErrors, setHasFormErrors] = useState(false);
 
-  const categories = [
-    'Tee',
-    'Lebkuchen',
-    'Kekse',
-    'Adventskalender',
-    'Liköre & Spirituosen',
-  ];
+  useEffect(() => {
+    fetch('http://localhost:4000/categories')
+      .then((result) => result.json())
+      .then((categoriesFromApi) => setCategories(categoriesFromApi));
+  }, []);
 
   const handleChange = (event) => {
     let inputValue = event.target.value; // "Glühwein"
@@ -54,7 +51,7 @@ export default function ProductForm({ onAddProduct }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (isProductValid(product)) {
-      onAddProduct({ id: uuidv4(), ...product });
+      onAddProduct(product);
       // setProduct(initialProduct);
       setHasFormErrors(false);
     } else {

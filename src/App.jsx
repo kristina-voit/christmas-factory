@@ -17,6 +17,14 @@ function App() {
     localStorageFavouriteProducts ?? []
   );
 
+  async function fetchProducts() {
+    const result = await fetch('http://localhost:4000/products');
+    const resultJson = await result.json();
+    setProducts(resultJson);
+  }
+
+  useEffect(() => fetchProducts(), []);
+
   useEffect(() => {
     saveToLocal('_products', products);
   }, [products]);
@@ -25,18 +33,32 @@ function App() {
     saveToLocal('_favouriteProducts', favouriteProducts);
   }, [favouriteProducts]);
 
-  const addProduct = (product) => setProducts([...products, product]);
+  async function addProductToDatabase(product) {
+    const result = await fetch('http://localhost:4000/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product),
+    });
+    return await result.json();
+  }
+
+  function addProduct(product) {
+    addProductToDatabase(product);
+    fetchProducts();
+  }
 
   function isProductInListOfFavourites(favouriteProductToAdd) {
     return favouriteProducts.some(
       (everyFavouriteProduct) =>
-        everyFavouriteProduct.id === favouriteProductToAdd.id
+        everyFavouriteProduct._id === favouriteProductToAdd._id
     );
   }
 
   function removeProductFromListOfFavourites(product) {
     return favouriteProducts.filter(
-      (everyFavouriteProduct) => everyFavouriteProduct.id !== product.id
+      (everyFavouriteProduct) => everyFavouriteProduct._id !== product._id
     );
   }
 
