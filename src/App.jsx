@@ -6,42 +6,69 @@ import ProductForm from './components/ProductForm';
 import './App.css';
 
 import { saveToLocal, loadFromLocal } from './lib/localStorage';
+import ProductCard from './components/ProductCard';
 
 function App() {
-  const localStorageProducts = loadFromLocal('_products'); //Variable für die Funktion, die die manuell hinzugefügten Produkte aus dem Local Storage lädt
-  const localStorageFavouriteProducts = loadFromLocal('_favouriteProducts'); //Variable für die Funktion, die die als Favoriten gekennzeichneten Produkte aus dem Local Storage lädt
+  const localStorageProducts = loadFromLocal('_products');
+  const localStorageFavouriteProducts = loadFromLocal('_favouriteProducts');
 
   const [products, setProducts] = useState(localStorageProducts ?? []);
-  const [favouriteProducts, setFavouriteProducts] = useState(localStorageFavouriteProducts ?? []);
+  const [favouriteProducts, setFavouriteProducts] = useState(
+    localStorageFavouriteProducts ?? []
+  );
+
+  async function fetchProducts() {
+    const result = await fetch('http://localhost:4000/products');
+    const resultJson = await result.json();
+    setProducts(resultJson);
+  }
+
+  useEffect(() => fetchProducts(), []);
 
   useEffect(() => {
     saveToLocal('_products', products);
-  }, [products]); // Wird nach jedem Mount ausgeführt, hinzugefügtes Produkt wird im Local Storage gespeichert
+  }, [products]);
 
   useEffect(() => {
     saveToLocal('_favouriteProducts', favouriteProducts);
-  }, [favouriteProducts]); // Wird nach jedem Mount ausgeführt, hinzugefügter Favorit wird im Local Storage gespeichert
+  }, [favouriteProducts]);
 
-  const addProduct = (product) => setProducts([...products, product]); // Variable für das Hinzufügen eines Produkts zu den bestehenden Produkten
+  async function addProductToDatabase(product) {
+    const result = await fetch('http://localhost:4000/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product),
+    });
+    return await result.json();
+  }
 
-  function isProductInListOfFavourites(favouriteProductToAdd) { // Wenn Favorit schon als Favorit markiert ist, gebe ihm die ID
+  function addProduct(product) {
+    addProductToDatabase(product);
+    fetchProducts();
+  }
+
+  function isProductInListOfFavourites(favouriteProductToAdd) {
     return favouriteProducts.some(
       (everyFavouriteProduct) =>
-        everyFavouriteProduct.id === favouriteProductToAdd.id
+        everyFavouriteProduct._id === favouriteProductToAdd._id
     );
   }
 
   function removeProductFromListOfFavourites(product) {
-    // Entferne den Favoriten von der Favoritenliste und gebe alle Favoriten-IDs außer der entfernten Favoriten-ID wieder
     return favouriteProducts.filter(
-      (everyFavouriteProduct) => everyFavouriteProduct.id !== product.id
+      (everyFavouriteProduct) => everyFavouriteProduct._id !== product._id
     );
   }
 
   function addToFavourites(favouriteProductToAdd) {
     // Produkt ist schon auf der Liste der Favourites => Entfernen!
     if (isProductInListOfFavourites(favouriteProductToAdd)) {
-      const favouritesToKeep = removeProductFromListOfFavourites(favouriteProductToAdd);setFavouriteProducts(favouritesToKeep);
+      const favouritesToKeep = removeProductFromListOfFavourites(
+        favouriteProductToAdd
+      );
+      setFavouriteProducts(favouritesToKeep);
     } else {
       // Produkt ist noch NICHT auf der Liste der Favourites => Hinzufügen!
       setFavouriteProducts([...favouriteProducts, favouriteProductToAdd]);
@@ -53,22 +80,13 @@ function App() {
       <ProductForm onAddProduct={addProduct} />
       <CardTree>
         {products.map((product, index) => (
-          <article
+          <ProductCard
             key={index}
-            className={'area' + (index < 10 ? index + 1 : '')}
-            style={
-              index > 9 ? { gridRowStart: Math.floor((index - 2) / 4) + 3 } : {}
-            }
-          >
-            <h3>{product.name}</h3>
-            <p>
-              {product.category} // {product.price} €
-            </p>
-            <FavouriteIcon onClick={() => addToFavourites(product)}> 
-          {/*Per Klick auf Favoriten-Stern: Produkt kommt zu Favoriten und bekommt gelben Stern, ansonsten leeren Stern*/}
-              {isProductInListOfFavourites(product) ? '⭐️' : '✩'}
-            </FavouriteIcon>
-          </article>
+            product={product}
+            index={index}
+            isFavourite={isProductInListOfFavourites(product)}
+            onAddToFavourites={addToFavourites}
+          />
         ))}
       </CardTree>
     </Container>
@@ -98,19 +116,7 @@ const CardTree = styled.div`
     '. . area2 area2 area3 area3 . .'
     '. area4 area4 area5 area5 area6 area6 .'
     'area7 area7 area8 area8 area9 area9 area10 area10';
-  padding: 6rem;
-
-  article {
-    background: var(--secondary-color);
-    border-radius: 8px;
-    grid-column: span 2;
-    padding: 0 1rem 0.5rem;
-    position: relative;
-  }
-  article:hover {
-    background: var(--primary-color);
-    color: var(--secondary-color);
-  }
+  padding: 6rem 1rem;
 
   .area1 {
     grid-area: area1;
@@ -142,12 +148,4 @@ const CardTree = styled.div`
   .area10 {
     grid-area: area10;
   }
-`;
-
-const FavouriteIcon = styled.span`
-  cursor: pointer;
-  font-size: 2rem;
-  position: absolute;
-  right: 0.5rem;
-  bottom: 0.5rem;
 `;
